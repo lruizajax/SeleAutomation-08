@@ -38,7 +38,7 @@ jobs:
         run: allure --version
 
       - name: Start Selenium Grid
-        run: docker-compose -f docker-compose-v3.yml up -d
+        run: docker compose -f docker-compose-v3.yml up -d
 
       - name: show docker containers
         run: docker ps -a
