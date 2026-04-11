@@ -45,18 +45,20 @@ jobs:
 
       - name: Wait for Selenium Grid to be ready
         run: |
-            echo "Waiting for Selenium Grid to be ready..."
-            for i in {1..30}; do
-              STATUS=$(curl -s http://localhost:4444/status ||  echo "offline")
-              if echo "$STATUS" | grep -q '"ready":true'; then
-                echo "Selenium Grid is ready!"
-                exit 0
-              fi
-              echo "Selenium Grid is not ready yet. Retrying in 5 seconds..."
-              sleep 3
-            done
-            echo "Selenium Grid is ready!"
-            exit 1
+          echo "Esperando a que Selenium Grid esté listo..."
+          # Reintenta hasta 30 veces con pausas de 3 segundos (90 segundos total)
+          for i in {1..30}; do
+            # -s (silent), -f (fail on error)
+            STATUS=$(curl -s http://localhost:4444/status || echo "offline")
+            if echo "$STATUS" | grep -q '"ready": true'; then
+              echo "✅ Selenium Grid está listo y los nodos están conectados!"
+              exit 0
+            fi
+            echo "⏳ Grid aún no responde (intento $i/30)..."
+            sleep 3
+          done
+          echo "❌ Error: Selenium Grid no inició a tiempo."
+          exit 1
 
       - name: run tests
         run: mvn clean verify
